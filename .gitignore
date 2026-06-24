@@ -1,0 +1,16 @@
+# .gitignore
+
+# 1. Ignorar el Entorno Virtual (¡Crucial!)
+# Nunca subas la carpeta donde se descargaron las librerías físicas
+.venv/
+
+# 2. Ignorar archivos de configuración con credenciales reales
+.env
+
+# 3. Ignorar archivos temporales que genera Python al compilar módulos
+**/__pycache__/
+*.pyc
+
+
+#
+*.cfg
