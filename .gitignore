@@ -6,6 +6,7 @@
 
 # 2. Ignorar archivos de configuración con credenciales reales
 .env
+.env.local
 
 # 3. Ignorar archivos temporales que genera Python al compilar módulos
 **/__pycache__/

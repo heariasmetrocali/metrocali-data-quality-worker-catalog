@@ -1,0 +1,22 @@
+[project]
+name = "metrocali-data-quality-worker-catalog"
+version = "0.1.0"
+description = "MetroCali Data Quality - Worker Catalog (Discovery Worker)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "python-dotenv>=1.0.0",
+    "sqlalchemy>=2.0.0",
+    "psycopg[binary]>=3.1.0",
+]
+
+[project.scripts]
+worker-catalog = "app.infrastructure.entrypoints.cli:main"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]

@@ -7,3 +7,8 @@ Este componente actúa como la primera fase del pipeline asíncrono de calidad d
 
 ---
 
+python -m app create-catalog --connection-id conn-1 --user-id user-1 --alias "Catalogo Produccion"
+
+
+
+pip install sqlalchemy python-dotenv psycopg[binary]

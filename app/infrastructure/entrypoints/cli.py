@@ -1,28 +1,15 @@
 import argparse
 import sys
 
-from app.application.use_cases.create_catalog import CreateCatalogUseCase
 from app.domain.exceptions.catalog_exception import CatalogException
-from app.infrastructure.adapters.fake_catalog_repository import FakeCatalogRepository
-from app.infrastructure.adapters.fake_connection_repository import (
-    FakeConnectionRepository,
-)
-from app.infrastructure.adapters.fake_user_repository import FakeUserRepository
-
-
-def build_create_catalog_use_case() -> CreateCatalogUseCase:
-    return CreateCatalogUseCase(
-        catalog_repository=FakeCatalogRepository(),
-        connection_repository=FakeConnectionRepository(),
-        user_repository=FakeUserRepository(),
-    )
+from app.infrastructure.composition_root import run_create_catalog_use_case
 
 
 def handle_create_catalog(args: argparse.Namespace) -> int:
-    use_case = build_create_catalog_use_case()
-
     try:
-        catalog = use_case.execute(
+        print (f"[INFRA.CLI] (handle_create_catalog), payload = [ args={args}]")
+
+        catalog = run_create_catalog_use_case(
             connection_id=args.connection_id,
             user_id=args.user_id,
             alias=args.alias,
@@ -52,7 +39,7 @@ def build_parser() -> argparse.ArgumentParser:
     create_catalog.add_argument(
         "--connection-id",
         required=True,
-        help="Connection identifier (e.g. conn-1, conn-2)",
+        help="Connection identifier (numeric id from connections table, e.g. 1)",
     )
     create_catalog.add_argument(
         "--user-id",
@@ -64,14 +51,21 @@ def build_parser() -> argparse.ArgumentParser:
         required=True,
         help="Catalog alias/name",
     )
+
     create_catalog.set_defaults(handler=handle_create_catalog)
 
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
+    print (f"[INFRA.CLI] main, payload = [ arg={argv}]")
+
     parser = build_parser()
+    print (f"[INFRA.CLI] after build_parse, parser={parser}")
+    
     args = parser.parse_args(argv)
+    print (f"[INFRA.CLI] after parser args, args={args}")
+
     return args.handler(args)
 
 
