@@ -10,6 +10,10 @@ from app.infrastructure.adapters.fake_user_repository import FakeUserRepository
 from app.infrastructure.adapters.sqlalchemy_connection_repository import (
     SqlAlchemyConnectionRepository,
 )
+
+from app.infrastructure.adapters.sqlalchemy_user_repository import SqlAlchemyUserRepository
+
+
 from app.infrastructure.config.settings import use_fake_connection_repository
 from app.infrastructure.database.session import session_scope
 
@@ -24,7 +28,7 @@ def build_create_catalog_use_case(session: Session) -> CreateCatalogUseCase:
     return CreateCatalogUseCase(
         catalog_repository=FakeCatalogRepository(),
         connection_repository=build_connection_repository(session),
-        user_repository=FakeUserRepository(),
+        user_repository=SqlAlchemyUserRepository(session),
     )
 
 
