@@ -58,14 +58,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    print (f"[INFRA.CLI] main, payload = [ arg={argv}]")
-
     parser = build_parser()
-    print (f"[INFRA.CLI] after build_parse, parser={parser}")
-    
     args = parser.parse_args(argv)
-    print (f"[INFRA.CLI] after parser args, args={args}")
-
+    
     return args.handler(args)
 
 

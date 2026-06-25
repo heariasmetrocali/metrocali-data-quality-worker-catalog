@@ -32,7 +32,6 @@ class SqlAlchemyConnectionRepository(ConnectionRepository):
         stmt = (
             select(ConnectionModel)
             .options(
-                joinedload(ConnectionModel.engine),
                 joinedload(ConnectionModel.server),
             )
             .where(ConnectionModel.id == connection_pk)

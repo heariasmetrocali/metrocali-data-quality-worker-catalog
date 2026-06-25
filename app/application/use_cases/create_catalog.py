@@ -30,6 +30,8 @@ class CreateCatalogUseCase:
             user_id=user_id,
             alias=alias,
         )
+
         catalog.validate_connection(connection)
 
+        # persis database.
         return self._catalog_repository.save(catalog)
