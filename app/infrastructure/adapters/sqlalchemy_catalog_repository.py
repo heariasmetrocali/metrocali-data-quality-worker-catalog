@@ -18,7 +18,6 @@ class SqlAlchemyCatalogRepository(CatalogRepository):
 
         self._session.add(entity)
         self._session.flush()
-        self._session.commit()
 
         return CatalogMapper.to_domain(entity)
 

@@ -1,30 +1,55 @@
 from sqlalchemy.orm import Session
 
+from app.application.services.build_catalog import BuildCatalogResult, BuildCatalogService
 from app.application.use_cases.create_catalog import CreateCatalogUseCase
-from app.infrastructure.adapters.sqlalchemy_catalog_repository import SqlAlchemyCatalogRepository
+from app.application.use_cases.inspect_schema import InspectSchemaUseCase
+from app.infrastructure.adapters.sqlalchemy_catalog_column_repository import (
+    SqlAlchemyCatalogColumnRepository,
+)
+from app.infrastructure.adapters.sqlalchemy_catalog_repository import (
+    SqlAlchemyCatalogRepository,
+)
+from app.infrastructure.adapters.sqlalchemy_catalog_table_repository import (
+    SqlAlchemyCatalogTableRepository,
+)
 from app.infrastructure.adapters.sqlalchemy_connection_repository import (
     SqlAlchemyConnectionRepository,
 )
-
+from app.infrastructure.adapters.sqlalchemy_schema_inspector import (
+    SqlAlchemySchemaInspector,
+)
 from app.infrastructure.adapters.sqlalchemy_user_repository import SqlAlchemyUserRepository
 from app.infrastructure.database.session import session_scope
 
-def build_create_catalog_use_case(session: Session) -> CreateCatalogUseCase:
-    return CreateCatalogUseCase(
+
+def build_build_catalog_service(session: Session) -> BuildCatalogService:
+    create_catalog_use_case = CreateCatalogUseCase(
         catalog_repository=SqlAlchemyCatalogRepository(session),
         connection_repository=SqlAlchemyConnectionRepository(session),
         user_repository=SqlAlchemyUserRepository(session),
     )
+    inspect_schema_use_case = InspectSchemaUseCase(
+        schema_inspector=SqlAlchemySchemaInspector(session),
+        catalog_table_repository=SqlAlchemyCatalogTableRepository(session),
+        catalog_column_repository=SqlAlchemyCatalogColumnRepository(session),
+    )
+    return BuildCatalogService(
+        create_catalog_use_case=create_catalog_use_case,
+        inspect_schema_use_case=inspect_schema_use_case,
+    )
 
-def run_create_catalog_use_case(
+
+def run_build_catalog_service(
     connection_id: str,
     user_id: str,
     alias: str,
-):
+) -> BuildCatalogResult:
     with session_scope() as session:
-        use_case = build_create_catalog_use_case(session)
-        return use_case.execute(
+        service = build_build_catalog_service(session)
+        result = service.execute(
             connection_id=connection_id,
             user_id=user_id,
             alias=alias,
         )
+        session.commit()
+        return result

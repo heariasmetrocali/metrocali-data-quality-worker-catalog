@@ -72,32 +72,40 @@ class OracleTnsConnectionStrategy(ConnectionStrategy):
 
 
 # =====================================================================
-# CONTEXTO CENTRALIZADO (Pinger + Registry Map)
+# CONTEXTO CENTRALIZADO (Engine factory + Pinger)
 # =====================================================================
-class TargetConnectionPinger:
+class TargetConnectionEngineFactory:
     def __init__(self, password_decryptor: PasswordDecryptor) -> None:
         self._password_decryptor = password_decryptor
-        
-        # Centralización de estrategias (Evita el uso de IF/SWITCH)
-        # Vinculamos el Enum de la base de datos directamente con su clase ejecutora
         self._strategies: dict[ConnectionType, ConnectionStrategy] = {
             ConnectionType.STANDARD: StandardConnectionStrategy(),
             ConnectionType.ORACLE_TNS: OracleTnsConnectionStrategy(),
         }
 
+    def build_engine(self, connection: ConnectionModel) -> Engine:
+        password = self._password_decryptor.decrypt(connection.encrypted_password)
+        strategy = self._strategies.get(
+            connection.connection_type,
+            StandardConnectionStrategy(),
+        )
+        return strategy.create_engine(connection, password)
+
+
+class TargetConnectionPinger:
+    def __init__(
+        self,
+        password_decryptor: PasswordDecryptor,
+        engine_factory: TargetConnectionEngineFactory | None = None,
+    ) -> None:
+        self._engine_factory = engine_factory or TargetConnectionEngineFactory(
+            password_decryptor
+        )
+
     def ping(self, connection: ConnectionModel) -> bool:
         if not connection.enable:
             return False
 
-        # 1. Desencriptar la contraseña en la capa de servicio/aplicación
-        password = self._password_decryptor.decrypt(connection.encrypted_password)
-
-        # 2. Resolver la estrategia de forma limpia mediante el mapa (Registry)
-        # Si por alguna razón viene un tipo no registrado, cae por defecto a STANDARD
-        strategy = self._strategies.get(connection.connection_type, StandardConnectionStrategy())
-
-        # 3. Delegar la creación del motor a la estrategia seleccionada
-        engine = strategy.create_engine(connection, password)
+        engine = self._engine_factory.build_engine(connection)
 
         try:
             with engine.connect() as conn:
@@ -106,5 +114,4 @@ class TargetConnectionPinger:
         except Exception:
             return False
         finally:
-            # Liberar el pool de conexiones inmediatamente al terminar el testeo
             engine.dispose()
