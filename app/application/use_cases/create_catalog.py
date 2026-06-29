@@ -17,14 +17,15 @@ class CreateCatalogUseCase:
         self._user_repository = user_repository
 
     def execute(self, connection_id: str, user_id: str, alias: str) -> Catalog:
-        user = self._user_repository.get_by_id(user_id)
-        if user is None:
-            raise CatalogException(f"user '{user_id}' not found")
-
         connection = self._connection_repository.get_by_id(connection_id)
         if connection is None:
             raise CatalogException(f"connection '{connection_id}' not found")
 
+        user = self._user_repository.get_by_id(user_id)
+        if user is None:
+            raise CatalogException(f"user '{user_id}' not found")
+
+        
         catalog = Catalog.create(
             connection_id=connection_id,
             user_id=user_id,
