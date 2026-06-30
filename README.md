@@ -12,3 +12,19 @@ python -m app create-catalog --connection-id conn-1 --user-id user-1 --alias "Ca
 
 
 pip install sqlalchemy python-dotenv psycopg[binary]
+
+
+
+comando para instalar 
+
+python -m app.infrastructure.entrypoints.polling_worker
+
+comando para testear el broker.
+
+docker exec -it local_valkey sh
+
+valkey-cli
+
+LPUSH catalog_events_queue '{"event_type":"ping","payload":{"ping_id":1}}'
+
+LRANGE catalog_events_queue 0 -1
