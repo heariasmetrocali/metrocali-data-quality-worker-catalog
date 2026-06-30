@@ -81,7 +81,7 @@ Para garantizar la portabilidad de los drivers de Oracle y el aislamiento de rec
 ### 1. Construir la Imagen (Build)
 ```bash
 # Ejecuta el siguiente comando en la raíz donde se encuentra el 'Dockerfile.worker':
-docker build -t metrocali-data-quality-worker:0.1.0-alpha.1 .
+docker build -t metrocali-data-quality-worker-catalog:1.0.0
 ```
 
 
