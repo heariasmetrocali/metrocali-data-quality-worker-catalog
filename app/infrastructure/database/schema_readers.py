@@ -14,7 +14,7 @@ class SchemaReaderStrategy(ABC):
 
 class PostgresSchemaReader(SchemaReaderStrategy):
     def read(self, engine: Engine, connection: ConnectionModel) -> list[InspectedTable]:
-        schema_name = connection.connection_params.get("schema", "public")
+        schema_name = connection.connection_params.get("schema", "data_quality")
 
         tables_query = text(
             """

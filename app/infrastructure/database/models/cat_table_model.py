@@ -10,7 +10,7 @@ from app.infrastructure.database.base import Base
 
 class CatTableModel(Base):
     __tablename__ = "cat_table"
-    __table_args__ = {"schema": "public"}
+    __table_args__ = {"schema": "data_quality"}
 
     id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
@@ -18,7 +18,7 @@ class CatTableModel(Base):
     )
     catalog_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
-        ForeignKey("public.catalog.id", ondelete="CASCADE"),
+        ForeignKey("data_quality.catalog.id", ondelete="CASCADE"),
         nullable=False,
     )
     name: Mapped[str] = mapped_column(String(150), nullable=False)
@@ -32,7 +32,7 @@ class CatTableModel(Base):
 
 class CatColumnModel(Base):
     __tablename__ = "cat_column"
-    __table_args__ = {"schema": "public"}
+    __table_args__ = {"schema": "data_quality"}
 
     id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
@@ -40,7 +40,7 @@ class CatColumnModel(Base):
     )
     table_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
-        ForeignKey("public.cat_table.id", ondelete="CASCADE"),
+        ForeignKey("data_quality.cat_table.id", ondelete="CASCADE"),
         nullable=False,
     )
     name: Mapped[str] = mapped_column(String(150), nullable=False)

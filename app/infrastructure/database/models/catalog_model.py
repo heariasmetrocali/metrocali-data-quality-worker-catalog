@@ -7,7 +7,7 @@ from app.infrastructure.database.base import Base
 
 class CatalogModel(Base):
     __tablename__ = "catalog"
-    __table_args__ = {"schema": "public"}
+    __table_args__ = {"schema": "data_quality"}
 
     # Recibe el UUID generado por el dominio. No usamos server_default aquí.
     id: Mapped[UUID] = mapped_column(
