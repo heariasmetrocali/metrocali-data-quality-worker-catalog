@@ -10,7 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 def load_environment() -> None:
     load_dotenv(PROJECT_ROOT / ".env")
-    load_dotenv(PROJECT_ROOT / ".env.local", override=True)
+    # load_dotenv(PROJECT_ROOT / ".env.local", override=True)
 
 
 def env_flag(name: str, default: bool = False) -> bool:
