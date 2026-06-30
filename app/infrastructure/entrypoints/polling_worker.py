@@ -2,6 +2,8 @@ import asyncio
 from typing import Any, Dict
 import redis.asyncio as aioredis
 
+import os
+
 from app.infrastructure.brokers.valkey_consumer import ValkeyConsumerAdapter
 from app.infrastructure.composition_root import run_ping_connection_use_case
 
@@ -57,11 +59,16 @@ class PollingEngine:
 
 # --- PUNTO DE ENTRADA PRINCIPAL ---
 async def main():
-    valkey_client = aioredis.from_url("redis://localhost:6379", decode_responses=True)
+    valkey_url = os.getenv("VALKEY_URL", "redis://localhost:6379")
+    queue_name = os.getenv("DATA_QUALITY_QUEUE", "catalog_events_queue")
+    
+    print(f"[+] Iniciando Worker escuchando la cola: {valkey_url} {queue_name}")
+
+    valkey_client = aioredis.from_url(valkey_url, decode_responses=True)
     
     consumer_adapter = ValkeyConsumerAdapter(valkey_client)
     
-    engine = PollingEngine(consumer_port=consumer_adapter, queue_name="catalog_events_queue")
+    engine = PollingEngine(consumer_port=consumer_adapter, queue_name=queue_name)
     
     try:
         await engine.start_polling()

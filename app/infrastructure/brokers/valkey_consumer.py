@@ -19,11 +19,6 @@ class ValkeyConsumerAdapter(BrokerConsumerPort):
             if result:
                 _, raw_message = result
                 print(f"[ValkeyAdapter][INFO] catch value: {raw_message}")
-
-                print(type(result))
-                print(type(raw_message))
-                print(repr(raw_message))
-                print(len(raw_message))
                 
                 return json.loads(raw_message)
                 
